@@ -1,6 +1,7 @@
 import tensorflow as tf
 from collections import OrderedDict
 import os
+import matplotlib.pyplot as plt
 
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '6'
@@ -56,7 +57,10 @@ if __name__ == '__main__':
     images = dataset.map(_parse_tf_example)
     # print(images)
 
-    dataset = images.batch(16)
+    dataset = dataset.shuffle(buffer_size=100000)
+    dataset = dataset.repeat(1000)
+
+    dataset = images.batch(1)
     iterator = dataset.make_initializable_iterator()
     next_element = iterator.get_next()
 
@@ -72,20 +76,14 @@ if __name__ == '__main__':
 
     with tf.Session() as sess:
         sess.run(iterator.initializer)
-        temp = (sess.run(next_element))
-        print(temp[1].shape)
-        print(len(temp))
-        print(type(temp))
-
-        # print((sess.run(next_element)))
-
-
-
         # sess.run(init_op)
-        # tf.train.start_queue_runners()
-        # print(sess.run(image_lr0))
-        # print(sess.run(image_lr0))
-        # print(hr_batch)
-    # print(keys)
-    # print(data_batch)
-    # print(input_info)
+        for i in range(10):
+            temp = (sess.run(next_element))
+            # temp = sess.run(dataset)
+            print(type(temp[1]))
+            print(len(temp))
+            print(type(temp))
+            print(temp[0].shape)
+            plt.imshow(temp[3][0,:,:,0],'gray')
+            plt.show()
+
